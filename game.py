@@ -81,15 +81,15 @@ class game:
         else:
             self.bg.bg()
             self.character_group.draw(self.screen)
-            self.orcs.draw(self.screen)
+            #self.orcs.draw(self.screen)
         pygame.display.flip()  
 
     def char_orc_collision(self):
-        collision = pygame.sprite.groupcollide(self.character_group, self.orcs, True, True)
+        collision = pygame.sprite.spritecollide(self.character, self.orcs, True)
         if collision:    
-            #for orcs in collision:
-                self.orcs.empty()
-                self.character_group.empty()
+            for orcs in collision:
+                orcs.kill()
+                self.character.kill()
                 self.in_battle = True
 
 if __name__ == '__main__':

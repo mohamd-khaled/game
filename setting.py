@@ -6,4 +6,4 @@ class setting:
         self.rect = self.image.get_rect()
         self.width = self.rect.width
         self.height = self.rect.height
-        self.character_speed = 2.5
+        self.character_speed = 5
