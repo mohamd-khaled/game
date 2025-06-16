@@ -11,7 +11,7 @@ class character(Sprite):
         self.screen_rect = game.screen.get_rect()
 
         #character moving images list
-        self.images = [ pygame.image.load('images/characters/Mage/mage.png'),
+        self.images = [ pygame.image.load('images/characters/Mage/mage.png')    ,
             pygame.image.load('images/characters/Mage/Walk/walk1.png'),
             pygame.image.load('images/characters/Mage/Walk/walk2.png'),
             pygame.image.load('images/characters/Mage/Walk/walk3.png'),
@@ -44,8 +44,8 @@ class character(Sprite):
         self.facing_right = True  # Start facing right
 
     #function to draw the character
-    def blitme(self):
-        self.screen.blit(self.image, self.rect)
+    #def blitme(self):
+    #    self.screen.blit(self.image, self.rect)
 
     #Updating the character position
     def update(self):
@@ -85,9 +85,9 @@ class character(Sprite):
     #Function to flip images when change direction of movement
     def moving_direction(self, face_right):
         self.facing_right = face_right
-        if not face_right:
-            self.move_images = [pygame.transform.flip(img, True, False) for img in self.images]
-        else:
+        if face_right:
             self.move_images = self.images.copy()
+        else:
+            self.move_images = [pygame.transform.flip(img, True, False) for img in self.images]
                 
 

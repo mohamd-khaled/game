@@ -16,9 +16,10 @@ class game:
         self.bg = bg(self)
         self.character = character(self)
         self.character_group = pygame.sprite.Group()
+        self.character_group.add(self.character)
         self.orcs = pygame.sprite.Group()
         self.orc()
-
+        self.in_battle = False
 
     def Run_Game(self):
 
@@ -75,16 +76,21 @@ class game:
             
         
     def update_screen(self):
-        self.bg.blitme()
-        self.character.blitme()
-        self.orcs.draw(self.screen)
+        if self.in_battle:
+            self.bg.battle_bg()
+        else:
+            self.bg.bg()
+            self.character_group.draw(self.screen)
+            self.orcs.draw(self.screen)
         pygame.display.flip()  
 
     def char_orc_collision(self):
-        collision = pygame.sprite.spritecollide(self.character, self.orcs, True)
+        collision = pygame.sprite.groupcollide(self.character_group, self.orcs, True, True)
         if collision:    
-            for orcs in collision:
-                orcs.kill()
+            #for orcs in collision:
+                self.orcs.empty()
+                self.character_group.empty()
+                self.in_battle = True
 
 if __name__ == '__main__':
     game = game()
