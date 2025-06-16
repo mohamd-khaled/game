@@ -1,8 +1,9 @@
 import pygame
 from pygame.sprite import Sprite
 
-class character():
+class character(Sprite):
     def __init__(self, game):
+        super().__init__()
 
         #getting screen dimensions and game setting
         self.screen = game.screen

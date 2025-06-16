@@ -15,6 +15,7 @@ class game:
         self.height = self.screen.get_rect().height 
         self.bg = bg(self)
         self.character = character(self)
+        self.character_group = pygame.sprite.Group()
         self.orcs = pygame.sprite.Group()
         self.orc()
 
@@ -25,7 +26,7 @@ class game:
             self.check_event()
             self.update_screen()
             self.character.update()
-            #self.char_orc_collision()
+            self.char_orc_collision()
             self.clock.tick(60)
             
     def check_event(self):
@@ -76,16 +77,14 @@ class game:
     def update_screen(self):
         self.bg.blitme()
         self.character.blitme()
-        #self.character.draw(self.screen)
         self.orcs.draw(self.screen)
         pygame.display.flip()  
 
-    """def char_orc_collision(self):
-        collision = pygame.sprite.spritecollide(self.show_char, self.show_char, True)
+    def char_orc_collision(self):
+        collision = pygame.sprite.spritecollide(self.character, self.orcs, True)
         if collision:    
             for orcs in collision:
                 orcs.kill()
-                self.show_char.kill()"""    
 
 if __name__ == '__main__':
     game = game()
