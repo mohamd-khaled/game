@@ -4,7 +4,7 @@ class bg():
     def __init__(self, game):
         self.screen = game.screen
         self.screen_rect = game.screen.get_rect()
-        self.image = pygame.image.load('images/Maps/FirstMap/03.bmp')
+        self.image = pygame.image.load('images/Maps/FirstMap/03.1.bmp')
         self.rect = self.image.get_rect()
 
         self.battle_img = pygame.image.load('images/Maps/game_background_4/game_background_4.png')
