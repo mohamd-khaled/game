@@ -82,14 +82,8 @@ class game:
         collision = pygame.sprite.spritecollide(self.character, self.orcs, True)
         if collision:
             for orcs in collision:
-                self.prev_char_pos = self.character.rect.topleft
-                self.prev_orc_positions = [(orc, orc.rect.topleft) for orc in self.orcs]
                 self.collided_orc = collision[0]
                 self.character_group.remove(self.character)
-                self.character.rect.midright = (self.width - 100, self.height // 2)
-                self.character.image = pygame.transform.flip(self.character.image, True, False)  # face left
-
-                self.collided_orc.rect.midleft = (100, self.height // 2)
                 self.battle_sprites.empty()
                 self.battle_sprites.add(self.character)
                 self.battle_sprites.add(self.collided_orc)
@@ -102,7 +96,7 @@ class game:
         else:
             self.bg.bg()
             self.character_group.draw(self.screen)
-            self.orcs.draw(self.screen)
+            #self.orcs.draw(self.screen)
         pygame.display.flip()       
 
 if __name__ == '__main__':

@@ -6,6 +6,7 @@ class character(Sprite):
         super().__init__()
 
         #getting screen dimensions and game setting
+        self.game = game
         self.screen = game.screen
         self.setting = game.setting
         self.screen_rect = game.screen.get_rect()
@@ -82,6 +83,14 @@ class character(Sprite):
                     self.image = self.move_images[self.current_frame]
             else:
                 self.image = self.move_images[0]
+                
+        if in_battle:
+                self.image = pygame.transform.flip(self.images[0], True, False) 
+                self.prev_char_pos = self.game.character.rect.topleft
+                self.prev_orc_positions = [(self.game.orc, self.game.orc.rect.topleft) for self.game.orc in self.game.orcs]
+                self.game.character.rect.midright = (self.game.width - 100, self.game.height // 2)
+                self.game.collided_orc.rect.midleft = (100, self.game.height // 2)
+
 
     #Function to flip images when change direction of movement
     def moving_direction(self, face_right):
