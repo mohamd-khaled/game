@@ -20,13 +20,17 @@ class game:
         self.orcs = pygame.sprite.Group()
         self.orc()
         self.in_battle = False
+        self.prev_char_pos = None
+        self.prev_orc_positions = []
+        self.collided_orc = None
+        self.battle_sprites = pygame.sprite.Group()
 
     def Run_Game(self):
 
         while True:
             self.check_event()
             self.update_screen()
-            self.character.update()
+            self.character.update(self.in_battle)
             self.char_orc_collision()
             self.clock.tick(60)
             
@@ -73,24 +77,33 @@ class game:
             show_orc = Orcs(self)
             self.orcs.add(show_orc)
 
-            
-        
-    def update_screen(self):
-        if self.in_battle:
-            self.bg.battle_bg()
-        else:
-            self.bg.bg()
-            self.character_group.draw(self.screen)
-            #self.orcs.draw(self.screen)
-        pygame.display.flip()  
 
     def char_orc_collision(self):
         collision = pygame.sprite.spritecollide(self.character, self.orcs, True)
-        if collision:    
+        if collision:
             for orcs in collision:
-                orcs.kill()
-                self.character.kill()
-                self.in_battle = True
+                self.prev_char_pos = self.character.rect.topleft
+                self.prev_orc_positions = [(orc, orc.rect.topleft) for orc in self.orcs]
+                self.collided_orc = collision[0]
+                self.character_group.remove(self.character)
+                self.character.rect.midright = (self.width - 100, self.height // 2)
+                self.character.image = pygame.transform.flip(self.character.image, True, False)  # face left
+
+                self.collided_orc.rect.midleft = (100, self.height // 2)
+                self.battle_sprites.empty()
+                self.battle_sprites.add(self.character)
+                self.battle_sprites.add(self.collided_orc)
+                self.in_battle = True   
+
+    def update_screen(self):
+        if self.in_battle:
+            self.bg.battle_bg()
+            self.battle_sprites.draw(self.screen)
+        else:
+            self.bg.bg()
+            self.character_group.draw(self.screen)
+            self.orcs.draw(self.screen)
+        pygame.display.flip()       
 
 if __name__ == '__main__':
     game = game()
