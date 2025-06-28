@@ -6,7 +6,7 @@ class bg():
         self.screen_rect = game.screen.get_rect()
         self.image = pygame.image.load('images/Maps/FirstMap/03.1.bmp')
         self.rect = self.image.get_rect()
-
+        self.loading_img = pygame.image.load('images/loading.jpeg')
         self.battle_img = pygame.image.load('images/Maps/game_background_4/game_background_4.png')
         self.battle_rect = self.battle_img.get_rect()
 
@@ -15,3 +15,6 @@ class bg():
 
     def battle_bg(self):
         self.screen.blit(self.battle_img, self.battle_rect)
+
+    def loading_bg(self):
+        self.screen.blit(self.loading_img, self.battle_rect)

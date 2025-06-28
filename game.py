@@ -4,6 +4,7 @@ from background import bg
 from setting import setting
 from character import character
 from orcs import Orcs
+from time import sleep
 
 class game:
     def __init__(self):
@@ -20,10 +21,12 @@ class game:
         self.orcs = pygame.sprite.Group()
         self.orc()
         self.in_battle = False
+        self.loading = False
         self.prev_char_pos = None
         self.prev_orc_positions = []
         self.collided_orc = None
         self.battle_sprites = pygame.sprite.Group()
+        self.loading_start_time = None
 
     def Run_Game(self):
 
@@ -79,20 +82,33 @@ class game:
 
 
     def char_orc_collision(self):
-        collision = pygame.sprite.spritecollide(self.character, self.orcs, True)
-        if collision:
-            for orcs in collision:
-                self.collided_orc = collision[0]
-                self.character_group.remove(self.character)
-                self.battle_sprites.empty()
-                self.battle_sprites.add(self.character)
-                self.battle_sprites.add(self.collided_orc)
-                self.in_battle = True   
+        if not self.in_battle and not self.loading:
+            collision = pygame.sprite.spritecollide(self.character, self.orcs, True)
+            if collision:
+                for orcs in collision:
+                    self.collided_orc = collision[0]
+                    self.character_group.remove(self.character)
+                    self.battle_sprites.empty()
+                    self.battle_sprites.add(self.character)
+                    self.battle_sprites.add(self.collided_orc)
+                    self.loading = True
+                    self.loading_start_time = pygame.time.get_ticks()
 
     def update_screen(self):
-        if self.in_battle:
+        current_time = pygame.time.get_ticks()
+
+        if self.loading:
+            self.bg.loading_bg()
+
+        # Wait 2 seconds, then transition
+            if current_time - self.loading_start_time >= 2000:
+                self.loading = False
+                self.in_battle = True
+
+        elif self.in_battle:
             self.bg.battle_bg()
             self.battle_sprites.draw(self.screen)
+
         else:
             self.bg.bg()
             self.character_group.draw(self.screen)
