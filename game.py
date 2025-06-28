@@ -3,6 +3,7 @@ import sys
 from background import bg
 from setting import setting
 from character import character
+from attack import attack
 from orcs import Orcs
 from time import sleep
 
@@ -27,6 +28,7 @@ class game:
         self.collided_orc = None
         self.battle_sprites = pygame.sprite.Group()
         self.loading_start_time = None
+        self.attack = pygame.sprite.Group()
 
     def Run_Game(self):
 
@@ -62,6 +64,9 @@ class game:
         elif event.key == pygame.K_q:
             sys.exit()
 
+        elif event.key == pygame.K_SPACE:
+            self.fire()
+
     def check_keyup_event(self, event):
         if event.key == pygame.K_RIGHT:
             self.character.moving_right = False
@@ -79,6 +84,10 @@ class game:
         for i in range(3):
             show_orc = Orcs(self)
             self.orcs.add(show_orc)
+
+    def fire(self):
+        new_attack = attack(self)
+        self.attack.add(new_attack)
 
 
     def char_orc_collision(self):
@@ -108,6 +117,9 @@ class game:
         elif self.in_battle:
             self.bg.battle_bg()
             self.battle_sprites.draw(self.screen)
+
+            self.attack.update()
+            self.attack.draw(self.screen)
 
         else:
             self.bg.bg()

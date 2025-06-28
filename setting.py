@@ -7,3 +7,4 @@ class setting:
         self.width = self.rect.width
         self.height = self.rect.height
         self.character_speed = 10
+        self.speed = -5
