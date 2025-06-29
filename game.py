@@ -5,7 +5,9 @@ from setting import setting
 from character import character
 from attack_char import attack_character
 from fire import fire
+from axe import Slash  # Assuming you have a class for the player's attack
 from orcs import Orcs
+from attack_orc import attack_orc  # Assuming you have a class for the orc's attack
 from time import sleep
 
 class game:
@@ -31,6 +33,7 @@ class game:
         self.loading_start_time = None
         self.fire = pygame.sprite.Group()
         self.attack_character = attack_character(self)
+        self.attack_orc = attack_orc(self)
         self.turn = "player"  # or "orc"
         self.battle_active = False
 
@@ -116,6 +119,12 @@ class game:
         self.battle_sprites.add(self.attack_character)
         self.battle_sprites.remove(self.character)
 
+
+    def start_orc_attack(self):
+        self.attack_orc = attack_orc(self)
+        self.battle_sprites.add(self.attack_orc)
+        self.battle_sprites.remove(self.collided_orc)
+
     def update_screen(self):
         current_time = pygame.time.get_ticks()
 
@@ -143,12 +152,23 @@ class game:
                         self.battle_sprites.remove(sprite)
                         self.battle_sprites.add(self.character)
                         self.turn = "orc" 
+
+                if isinstance(sprite, attack_orc):
+                    sprite.update()
+                    if sprite.animation_done:
+                        self.battle_sprites.remove(sprite)
+                        self.battle_sprites.add(self.character)
+                        self.turn = "player" 
+                    
+            if self.turn == "orc" and not any(isinstance(s, attack_orc) for s in self.battle_sprites):
+                self.start_orc_attack()
+
             
 
         else:
             self.bg.bg()
             self.character_group.draw(self.screen)
-            #self.orcs.draw(self.screen)
+            self.orcs.draw(self.screen)
         pygame.display.flip()       
 
 if __name__ == '__main__':
