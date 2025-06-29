@@ -4,7 +4,7 @@ from background import bg
 from setting import setting
 from character import character
 from attack_char import attack_character
-from attack import attack
+from fire import fire
 from orcs import Orcs
 from time import sleep
 
@@ -29,8 +29,10 @@ class game:
         self.collided_orc = None
         self.battle_sprites = pygame.sprite.Group()
         self.loading_start_time = None
-        self.attack = pygame.sprite.Group()
+        self.fire = pygame.sprite.Group()
         self.attack_character = attack_character(self)
+        self.turn = "player"  # or "orc"
+        self.battle_active = False
 
     def Run_Game(self):
 
@@ -67,9 +69,10 @@ class game:
             sys.exit()
 
         elif event.key == pygame.K_SPACE:
-            self.fire()
-            if self.in_battle:
+            if self.in_battle and self.turn == "player":
                 self.start_attack()
+                self.fire_attack()
+
 
     def check_keyup_event(self, event):
         if event.key == pygame.K_RIGHT:
@@ -89,9 +92,9 @@ class game:
             show_orc = Orcs(self)
             self.orcs.add(show_orc)
 
-    def fire(self):
-        new_attack = attack(self)
-        self.attack.add(new_attack)
+    def fire_attack(self):
+        new_attack = fire(self)
+        self.fire.add(new_attack)
 
 
     def char_orc_collision(self):
@@ -123,13 +126,15 @@ class game:
             if current_time - self.loading_start_time >= 1000:
                 self.loading = False
                 self.in_battle = True
+                self.turn = "player"
+                self.battle_active = True
 
         elif self.in_battle:
             self.bg.battle_bg()
             self.battle_sprites.draw(self.screen)
 
-            self.attack.update()
-            self.attack.draw(self.screen)
+            self.fire.update()
+            self.fire.draw(self.screen)
 
             for sprite in self.battle_sprites:
                 if isinstance(sprite, attack_character):
@@ -137,6 +142,7 @@ class game:
                     if sprite.animation_done:
                         self.battle_sprites.remove(sprite)
                         self.battle_sprites.add(self.character)
+                        self.turn = "orc" 
             
 
         else:

@@ -1,7 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 
-class attack(Sprite):
+class fire(Sprite):
     
     def __init__(self, game):
         super().__init__()
