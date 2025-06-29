@@ -17,13 +17,12 @@ class attack(Sprite):
         self.image = self.attack_img[self.image_index]
         self.rect = self.image.get_rect()
 
-        self.rect.midleft = game.character.rect.midleft
-
+        self.rect.left = game.character.rect.left
+        self.rect.centery = game.character.rect.centery
         self.speed = self.setting.speed  # Speed in y direction if vertical (adjust if you want horizontal)
 
         self.animation_counter = 0  # To slow down animation frame updates
 
-        self.x = float(self.rect.x)
 
     def update(self):
         # Move attack (you can change direction logic)
@@ -34,5 +33,5 @@ class attack(Sprite):
             self.image_index = (self.image_index + 1) % len(self.attack_img)
             self.image = self.attack_img[self.image_index]
                                      
-        if self.rect.bottom < 0:
+        if self.rect.left < (0.8 * self.screen.get_rect().width):
             self.kill()

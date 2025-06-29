@@ -12,7 +12,7 @@ class character(Sprite):
         self.screen_rect = game.screen.get_rect()
 
         #character moving images list
-        self.images = [ pygame.image.load('images/characters/Mage/mage.png'),
+        self.images = [ pygame.image.load('images/characters/Mage/Walk/mage.png'),
             pygame.image.load('images/characters/Mage/Walk/walk1.png'),
             pygame.image.load('images/characters/Mage/Walk/walk2.png'),
             pygame.image.load('images/characters/Mage/Walk/walk3.png'),
@@ -85,7 +85,7 @@ class character(Sprite):
                 self.image = self.move_images[0]
                 
         if in_battle:
-                self.image = pygame.transform.flip(self.images[0], True, False) 
+                self.image = pygame.transform.flip(pygame.image.load('images/characters/Mage/mage.png'), True, False) 
                 self.prev_char_pos = self.game.character.rect.topleft
                 self.prev_orc_positions = [(self.game.orc, self.game.orc.rect.topleft) for self.game.orc in self.game.orcs]
                 self.game.character.rect.midright = (self.game.width - 100, self.game.height // 2)

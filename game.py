@@ -3,6 +3,7 @@ import sys
 from background import bg
 from setting import setting
 from character import character
+from attack_char import attack_character
 from attack import attack
 from orcs import Orcs
 from time import sleep
@@ -29,6 +30,7 @@ class game:
         self.battle_sprites = pygame.sprite.Group()
         self.loading_start_time = None
         self.attack = pygame.sprite.Group()
+        self.attack_character = attack_character(self)
 
     def Run_Game(self):
 
@@ -66,6 +68,8 @@ class game:
 
         elif event.key == pygame.K_SPACE:
             self.fire()
+            if self.in_battle:
+                self.start_attack()
 
     def check_keyup_event(self, event):
         if event.key == pygame.K_RIGHT:
@@ -103,6 +107,12 @@ class game:
                     self.loading = True
                     self.loading_start_time = pygame.time.get_ticks()
 
+
+    def start_attack(self):
+        self.attack_character = attack_character(self)
+        self.battle_sprites.add(self.attack_character)
+        self.battle_sprites.remove(self.character)
+
     def update_screen(self):
         current_time = pygame.time.get_ticks()
 
@@ -110,7 +120,7 @@ class game:
             self.bg.loading_bg()
 
         # Wait 2 seconds, then transition
-            if current_time - self.loading_start_time >= 2000:
+            if current_time - self.loading_start_time >= 1000:
                 self.loading = False
                 self.in_battle = True
 
@@ -120,6 +130,14 @@ class game:
 
             self.attack.update()
             self.attack.draw(self.screen)
+
+            for sprite in self.battle_sprites:
+                if isinstance(sprite, attack_character):
+                    sprite.update()
+                    if sprite.animation_done:
+                        self.battle_sprites.remove(sprite)
+                        self.battle_sprites.add(self.character)
+            
 
         else:
             self.bg.bg()
