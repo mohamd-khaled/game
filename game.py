@@ -108,6 +108,11 @@ class game:
             if collision:
                 for orcs in collision:
                     self.collided_orc = collision[0]
+                    self.prev_orc_positions = [
+                        (orc, orc.rect.topleft)
+                        for orc in self.orcs
+                        if orc != self.collided_orc
+                    ]
 
                     # Then update battle positions
                     self.character.rect.midright = (self.width - 100, self.height // 2)
@@ -200,7 +205,8 @@ class game:
             self.orcs.empty()
             for orc, pos in self.prev_orc_positions:
                 orc.rect.topleft = pos
-                self.orcs.add(orc)
+                if orc not in self.orcs:
+                    self.orcs.add(orc)
             self.collided_orc = None
             self.fire.empty()
 
