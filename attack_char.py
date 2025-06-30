@@ -30,7 +30,7 @@ class attack_character(Sprite):
         self.image = self.images[self.image_index]
 
         self.rect = self.image.get_rect()
-        self.rect.midbottom = game.character.rect.midbottom
+        self.rect.midright = (self.game.width - 100, self.game.height // 2)
 
         self.animation_counter = 0
         self.animation_done = False

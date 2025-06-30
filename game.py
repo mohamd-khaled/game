@@ -5,7 +5,6 @@ from setting import setting
 from character import character
 from attack_char import attack_character
 from fire import fire
-from axe import Slash  # Assuming you have a class for the player's attack
 from orcs import Orcs
 from attack_orc import attack_orc  # Assuming you have a class for the orc's attack
 from time import sleep
@@ -157,7 +156,7 @@ class game:
                     sprite.update()
                     if sprite.animation_done:
                         self.battle_sprites.remove(sprite)
-                        self.battle_sprites.add(self.character)
+                        self.battle_sprites.add(self.collided_orc)
                         self.turn = "player" 
                     
             if self.turn == "orc" and not any(isinstance(s, attack_orc) for s in self.battle_sprites):

@@ -13,3 +13,6 @@ class Orcs(Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, (self.screen_rect.width - self.rect.width))
         self.rect.y = random.randint(0, (self.screen_rect.height - self.rect.height))
+
+
+    
