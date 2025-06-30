@@ -33,5 +33,5 @@ class fire(Sprite):
             self.image_index = (self.image_index + 1) % len(self.attack_img)
             self.image = self.attack_img[self.image_index]
                                      
-        if self.rect.left < (0.8 * self.screen.get_rect().width):
+        if self.rect.left < (0.85 * self.screen.get_rect().width):
             self.kill()

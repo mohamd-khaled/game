@@ -6,5 +6,9 @@ class setting:
         self.rect = self.image.get_rect()
         self.width = self.rect.width
         self.height = self.rect.height
-        self.character_speed = 10
-        self.speed = -5
+        self.character_speed = 10 
+        self.speed = -5 # Speed for fire attack
+        self.charcter_helth = 100
+        self.orc_helth = 100
+        self.attack_damage = 10
+        self.orc_attack_damage = 10

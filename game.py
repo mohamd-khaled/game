@@ -8,6 +8,7 @@ from fire import fire
 from orcs import Orcs
 from attack_orc import attack_orc  # Assuming you have a class for the orc's attack
 from time import sleep
+from health_bar import HealthBar
 
 class game:
     def __init__(self):
@@ -35,9 +36,10 @@ class game:
         self.attack_orc = attack_orc(self)
         self.turn = "player"  # or "orc"
         self.battle_active = False
+        self.character_health_bar = HealthBar(self, max_health=100, x=self.width - 250, y=50, color=(0, 255, 0))
+        self.orc_health_bar = HealthBar(self, max_health=100,  x=50, y=50,  color=(255, 0, 0))
 
     def Run_Game(self):
-
         while True:
             self.check_event()
             self.update_screen()
@@ -117,12 +119,15 @@ class game:
         self.attack_character = attack_character(self)
         self.battle_sprites.add(self.attack_character)
         self.battle_sprites.remove(self.character)
-
+        # when character attacks   
+        self.orc_health_bar.take_damage(self.setting.attack_damage)
 
     def start_orc_attack(self):
         self.attack_orc = attack_orc(self)
         self.battle_sprites.add(self.attack_orc)
         self.battle_sprites.remove(self.collided_orc)
+        # when orc attacks
+        self.character_health_bar.take_damage(self.setting.orc_attack_damage)
 
     def update_screen(self):
         current_time = pygame.time.get_ticks()
@@ -130,7 +135,7 @@ class game:
         if self.loading:
             self.bg.loading_bg()
 
-        # Wait 2 seconds, then transition
+        # Wait 1 seconds, then transition
             if current_time - self.loading_start_time >= 1000:
                 self.loading = False
                 self.in_battle = True
@@ -143,6 +148,9 @@ class game:
 
             self.fire.update()
             self.fire.draw(self.screen)
+
+            self.character_health_bar.draw()
+            self.orc_health_bar.draw()
 
             for sprite in self.battle_sprites:
                 if isinstance(sprite, attack_character):
