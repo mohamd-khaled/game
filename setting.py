@@ -10,5 +10,5 @@ class setting:
         self.speed = -5 # Speed for fire attack
         self.charcter_helth = 100
         self.orc_helth = 100
-        self.attack_damage = 90
+        self.attack_damage = 20
         self.orc_attack_damage = 10

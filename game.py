@@ -51,7 +51,7 @@ class game:
     def check_event(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
+                sys.exiin_battlet()
             elif event.type == pygame.KEYDOWN:
                 self.check_keydown_event(event)
             elif event.type == pygame.KEYUP:
@@ -104,37 +104,43 @@ class game:
 
     def char_orc_collision(self):
         if not self.in_battle and not self.loading:
-            collision = pygame.sprite.spritecollide(self.character, self.orcs, True)
+            collision = pygame.sprite.spritecollide(self.character, self.orcs, False)
             if collision:
-                for orcs in collision:
                     self.collided_orc = collision[0]
+                    
                     self.prev_orc_positions = [
                         (orc, orc.rect.topleft)
                         for orc in self.orcs
                         if orc != self.collided_orc
                     ]
-
+            
+                    # Reset health bars for new battle
+                    self.orc_health_bar.current_health = self.orc_health_bar.max_health 
                     # Then update battle positions
                     self.character.rect.midright = (self.width - 100, self.height // 2)
                     self.collided_orc.rect.midleft = (100, self.height // 2)
+
                     self.character_group.remove(self.character)
                     self.battle_sprites.empty()
                     self.battle_sprites.add(self.character)
                     self.battle_sprites.add(self.collided_orc)
+
                     self.loading = True
                     self.loading_start_time = pygame.time.get_ticks()
 
 
     def start_attack(self):
-        self.attack_character = attack_character(self)
-        self.battle_sprites.add(self.attack_character)
-        self.battle_sprites.remove(self.character)
+        if not any(isinstance(sprite, attack_character) for sprite in self.battle_sprites):
+            self.attack_character = attack_character(self)
+            self.battle_sprites.add(self.attack_character)
+            self.battle_sprites.remove(self.character)
 
 
     def start_orc_attack(self):
-        self.attack_orc = attack_orc(self)
-        self.battle_sprites.add(self.attack_orc)
-        self.battle_sprites.remove(self.collided_orc)
+        if not any(isinstance(sprite, attack_orc) for sprite in self.battle_sprites):
+            self.attack_orc = attack_orc(self)
+            self.battle_sprites.add(self.attack_orc)
+            self.battle_sprites.remove(self.collided_orc)
 
 
     def update_screen(self):
@@ -145,14 +151,16 @@ class game:
 
         # Wait 1 seconds, then transition
             if current_time - self.loading_start_time >= 1000:
-                self.loading = False
-                self.in_battle = True
-                self.turn = "player"
-                self.battle_active = True
+                if not self.in_battle:
+                    self.loading = False
+                    self.in_battle = True
+                    self.turn = "player"
+                    self.battle_active = True
 
         elif self.in_battle:
             self.bg.battle_bg()
             self.battle_sprites.draw(self.screen)
+
 
             self.fire.update()
             self.fire.draw(self.screen)
@@ -188,27 +196,34 @@ class game:
             self.bg.bg()
             self.character_group.draw(self.screen)
             self.orcs.draw(self.screen)
+            self.battle_active = False
         pygame.display.flip()       
 
 
     def end_battle(self):
         if self.character_health_bar.current_health <= 0:
-            print("Game Over! You have been defeated by the orc.")
             pygame.quit()
             sys.exit()
         elif self.orc_health_bar.current_health <= 0:
+
+            self.loading = False
             self.in_battle = False
+            self.battle_active = False
+
+            self.orcs.remove(self.collided_orc)
             self.battle_sprites.empty()
+
             if self.prev_char_pos:
                 self.character.rect.topleft = self.prev_char_pos
             self.character_group.add(self.character)
-            self.orcs.empty()
+
             for orc, pos in self.prev_orc_positions:
-                orc.rect.topleft = pos
                 if orc not in self.orcs:
-                    self.orcs.add(orc)
-            self.collided_orc = None
+                    orc.rect.topleft = pos
+                    
             self.fire.empty()
+
+            self.turn = "player"
 
 if __name__ == '__main__':
     game = game()

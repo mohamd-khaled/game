@@ -84,7 +84,7 @@ class character(Sprite):
             else:
                 self.image = self.move_images[0]
                 
-        if in_battle:
+        if in_battle and self.game.collided_orc is not None:
                 self.image = pygame.transform.flip(pygame.image.load('images/characters/Mage/mage.png'), True, False) 
                 self.prev_char_pos = self.game.character.rect.topleft
                 self.prev_orc_positions = [(self.game.orc, self.game.orc.rect.topleft) for self.game.orc in self.game.orcs]
