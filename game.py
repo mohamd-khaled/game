@@ -36,8 +36,8 @@ class game:
         self.attack_orc = attack_orc(self)
         self.turn = "player"  # or "orc"
         self.battle_active = False
-        self.character_health_bar = HealthBar(self, max_health=100, x=self.width - 250, y=50, color=(0, 255, 0))
-        self.orc_health_bar = HealthBar(self, max_health=100,  x=50, y=50,  color=(255, 0, 0))
+        self.character_health_bar = HealthBar(self, max_health=100, x=self.width - 250, y=(self.height/2)-100, color=(0, 255, 0))
+        self.orc_health_bar = HealthBar(self, max_health=100,  x=50, y=(self.height/2)-100,  color=(255, 0, 0))
 
     def Run_Game(self):
         while True:
@@ -45,6 +45,7 @@ class game:
             self.update_screen()
             self.character.update(self.in_battle)
             self.char_orc_collision()
+            self.end_battle()
             self.clock.tick(60)
             
     def check_event(self):
@@ -107,6 +108,10 @@ class game:
             if collision:
                 for orcs in collision:
                     self.collided_orc = collision[0]
+
+                    # Then update battle positions
+                    self.character.rect.midright = (self.width - 100, self.height // 2)
+                    self.collided_orc.rect.midleft = (100, self.height // 2)
                     self.character_group.remove(self.character)
                     self.battle_sprites.empty()
                     self.battle_sprites.add(self.character)
@@ -119,15 +124,13 @@ class game:
         self.attack_character = attack_character(self)
         self.battle_sprites.add(self.attack_character)
         self.battle_sprites.remove(self.character)
-        # when character attacks   
-        self.orc_health_bar.take_damage(self.setting.attack_damage)
+
 
     def start_orc_attack(self):
         self.attack_orc = attack_orc(self)
         self.battle_sprites.add(self.attack_orc)
         self.battle_sprites.remove(self.collided_orc)
-        # when orc attacks
-        self.character_health_bar.take_damage(self.setting.orc_attack_damage)
+
 
     def update_screen(self):
         current_time = pygame.time.get_ticks()
@@ -158,7 +161,9 @@ class game:
                     if sprite.animation_done:
                         self.battle_sprites.remove(sprite)
                         self.battle_sprites.add(self.character)
-                        self.turn = "orc" 
+                        self.turn = "orc"
+                        # when character attacks   
+                        self.orc_health_bar.take_damage(self.setting.attack_damage)
 
                 if isinstance(sprite, attack_orc):
                     sprite.update()
@@ -166,6 +171,8 @@ class game:
                         self.battle_sprites.remove(sprite)
                         self.battle_sprites.add(self.collided_orc)
                         self.turn = "player" 
+                        # when orc attacks
+                        self.character_health_bar.take_damage(self.setting.orc_attack_damage)
                     
             if self.turn == "orc" and not any(isinstance(s, attack_orc) for s in self.battle_sprites):
                 self.start_orc_attack()
@@ -177,6 +184,25 @@ class game:
             self.character_group.draw(self.screen)
             self.orcs.draw(self.screen)
         pygame.display.flip()       
+
+
+    def end_battle(self):
+        if self.character_health_bar.current_health <= 0:
+            print("Game Over! You have been defeated by the orc.")
+            pygame.quit()
+            sys.exit()
+        elif self.orc_health_bar.current_health <= 0:
+            self.in_battle = False
+            self.battle_sprites.empty()
+            if self.prev_char_pos:
+                self.character.rect.topleft = self.prev_char_pos
+            self.character_group.add(self.character)
+            self.orcs.empty()
+            for orc, pos in self.prev_orc_positions:
+                orc.rect.topleft = pos
+                self.orcs.add(orc)
+            self.collided_orc = None
+            self.fire.empty()
 
 if __name__ == '__main__':
     game = game()
